@@ -7,8 +7,9 @@ Created on 29 f�vr. 2020
 '''
 import tkinter as tk
 from tkinter import messagebox
+from tkinter.constants import MULTIPLE, EXTENDED, LEFT, BOTTOM
+from idlelib import sidebar
 from cgitb import text
-from idlelib.configdialog import font_sample_text
 
 class Vue(tk.Tk):
     '''
@@ -17,6 +18,7 @@ class Vue(tk.Tk):
 
     color_fond = "#212F3C"
     taille_fenetre = (720,480)
+    tple_operateur = ("+","-","*","/")
     
     def __init__(self, controller):
         '''
@@ -95,33 +97,57 @@ class Vue(tk.Tk):
             
     def interface_du_entrainement(self, tirage):
         print(tirage)
+        
+        #on cache l'interface d'enregistrement
         self._cadre_enregistrement_p.pack_forget()
         
-        self._interface = tk.Frame(self, bg = Vue.color_fond)
+        #la grande section où sont inclus le frame inter_tirage
+        self._interface = tk.Frame(self, bg = Vue.color_fond, bd=2, relief="sunken")
+        self._inter_solution = tk.Frame(self, bg = Vue.color_fond, bd=2, relief="sunken")
+        self._inter_Historique = tk.Frame(self, bg = Vue.color_fond, bd=2, relief="sunken", padx=10, pady=10)
         
-        #les sections
+        #les sous sections
         self._inter_tirage = tk.Frame(self._interface, bg = Vue.color_fond)
-        self._inter_N = tk.Frame(self._interface, bg = Vue.color_fond)
+        self._inter_effectuer_operation = tk.Frame(self._interface, bg = Vue.color_fond) #le bouton effectuer l'opération
         
-        self._inter_operateurs= tk.Frame(self._interface, bg = Vue.color_fond)
-        self._inter_solution = tk.Frame(self._interface, bg = Vue.color_fond)
         
-        self._inter_Historique= tk.Frame(self._interface, bg = Vue.color_fond)
+        #les listes box des plaques et les opérateurs
+        self._listbox_des_plaques = tk.Listbox(self._inter_tirage, exportselection=0, selectmode=EXTENDED, activestyle='none')
+        self._listbox_des_operateurs = tk.Listbox(self._inter_tirage, exportselection=0, activestyle='none')
         
-        self._val_tirage = list()
+        #le boutton effectué l'opération
+        self._buton_effectuer_operation = tk.Button(self._inter_effectuer_operation, text="Effectuer", command=self.get_index)
+        self._le_nombre_N = tk.Label(self._inter_solution, text="154", font=("Courrier", 25), bg = "white", fg = Vue.color_fond)
+        self._buton_solution = tk.Button(self._inter_solution, text="Solution", font=("Courrier", 15), bg = "white", fg = Vue.color_fond)
         
-        #les boutons du tirage
+        
+        self._label_historique = tk.Label(self._inter_Historique, text="HISTORIQUE")
+        #les items de la listbox des plaques
         for i in range(0,6):
-            _tmp = tk.Button(self._inter_tirage, text=tirage[i], font=("Arial", 15))
-            #_tmp.config(command = lambda:self.get_index(i))
-            _tmp.grid(row = 0, column = i)
-            self._val_tirage.append(_tmp)
+            self._listbox_des_plaques.insert(i, "{}".format(tirage[i]))
             
+        #les items de la listbox des opérateurs
+        for i in range(0,4):
+            self._listbox_des_operateurs.insert(i, "{}".format(Vue.tple_operateur[i]))
         
-        self._val_tirage[1].config(command = lambda:self.get_index(1))
+        
+        self._interface.grid(row=0, column=0)
+        self._inter_solution.grid(row=0, column=1, sticky = "ns", padx=5, pady=5)
+        self._inter_Historique.grid(row=2, column=0)
         
         self._inter_tirage.pack()
-        self._interface.pack(expand = "yes")
+        self._listbox_des_plaques.pack(side = LEFT)
+        self._listbox_des_operateurs.pack(side = LEFT)
+        self._inter_effectuer_operation.pack()
+        
+        
+        self._buton_effectuer_operation .pack()
+        self._le_nombre_N.pack(padx=10, pady=5, fill= "both")
+        self._buton_solution.pack()
+        self._label_historique.pack()
     
-    def get_index(self, arg):
-        print(arg)
+    def get_index(self):
+        print("Vous avez selectionner la plaque numéro : {} => 1erOperande".format(int(self._listbox_des_plaques.curselection()[0]+1)))
+        print("Et l'opérateur numéro : {}".format(int(self._listbox_des_operateurs.curselection()[0]+1)))
+        print("Vous avez selectionner la plaque numéro : {} => 2emOperande".format(int(self._listbox_des_plaques.curselection()[1]+1)))
+        

@@ -17,7 +17,7 @@ class Historique:
     
     @classmethod
     def creer_fichier(self, nom_du_fichier):
-        fichier = open("{}{}.data".format(Historique._path, nom_du_fichier), "xb") 
+        fichier = open("{}{}.data".format(Historique._path, nom_du_fichier), "ab") 
         fichier.close()
     
     @classmethod
