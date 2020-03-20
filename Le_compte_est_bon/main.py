@@ -2,7 +2,10 @@
 
 from controllers.Controller import Controller
 
+
 c = Controller()
+c.lancer()
+
 """import tkinter as tk
 
 root = tk.Tk()

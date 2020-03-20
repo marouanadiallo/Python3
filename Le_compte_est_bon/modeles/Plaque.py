@@ -16,10 +16,11 @@ class Plaques:
    
     
     @classmethod
-    def tirer_6_plaques(self): #return un tuple de six plaques
+    def tirer_plaques(self, nb=6): 
+        #return une liste de six nombres (ici des plaques)
         resultat_du_tirage = list()
         i = 0
-        while i < 6:
-            resultat_du_tirage.append(Plaques.lesPlaques[random.randrange(1,28)])
+        while i < nb:
+            resultat_du_tirage.append(Plaques.lesPlaques[random.randrange(0,len(Plaques.lesPlaques))])
             i += 1
         return resultat_du_tirage

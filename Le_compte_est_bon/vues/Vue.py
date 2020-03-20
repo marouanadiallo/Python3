@@ -18,7 +18,6 @@ class Vue(tk.Tk):
 
     color_fond = "#212F3C"
     taille_fenetre = (720,480)
-    tple_operateur = ("+","-","*","/")
     
     def __init__(self, controller):
         '''
@@ -77,24 +76,28 @@ class Vue(tk.Tk):
         self._canvas.create_image(self._t_icon[0]/2, self._t_icon[1]/2, image = self._image)
         
         self._canvas.grid(row=0, column=0, sticky="w")
-        #Variable de controle
+        
+        #Variable de controle pour récupérer le nom saisie
         self._var_nom = tk.StringVar()
         self._champ_nom = tk.Entry(self._cadre_enregistrement_2, font=("Courrier", 18), textvariable=self._var_nom).grid(row=0, column = 1, sticky="w")
         
-        self._buton_enregistrer = tk.Button(self._cadre_enregistrement_3, text="Connexion", font=("Courrier", 10), bg = "white", fg = Vue.color_fond, command=self.creer_joueur_mode_entraienement).pack(pady=5, padx=5, fill="both")
+        self._buton_enregistrer = tk.Button(self._cadre_enregistrement_3, text="Connexion", font=("Courrier", 10), bg = "white", fg = Vue.color_fond, command=self.enregistrer_joueur).pack(pady=5, padx=5, fill="both")
         
         self._cadre_enregistrement.pack(side="top")
         self._cadre_enregistrement_2.pack( side="top")
         self._cadre_enregistrement_3.pack( side="top")
         self._cadre_enregistrement_p.pack( expand = "yes")
         
-    def creer_joueur_mode_entraienement(self):
+    def enregistrer_joueur(self):
+        #fonction callback du buton connexion 
         if len(self._var_nom.get()) == 0 :
-            messagebox.showinfo("Champ vide!", "Le champ ne doit pas être vide, veuillez renseigner un pseudo!")
+            self.lance_alert("Le champ ne doit pas être vide, veuillez renseigner un pseudo!")
         else:
-            self._controller.creer_joueur_mode_entrainement(self._var_nom.get()) #recupère le pseudo saisie et on enregistre
-            self.interface_du_entrainement(self._controller.tirage())  #appelle interface d'entrainement
-            
+            self._controller.enregistrer_joueur_et_lancer_entrainement(self._var_nom.get()) #recupère le pseudo saisie et on enregistre
+    
+    def get_index(self, event):
+        print(self._listbox_operation.curselection())
+           
     def interface_du_entrainement(self, tirage):
         print(tirage)
         
@@ -115,8 +118,10 @@ class Vue(tk.Tk):
         self._listbox_des_plaques = tk.Listbox(self._inter_tirage, exportselection=0, selectmode=EXTENDED, activestyle='none')
         self._listbox_des_operateurs = tk.Listbox(self._inter_tirage, exportselection=0, activestyle='none')
         
+        self._listbox_operation = tk.Listbox(self._inter_Historique, exportselection=0, selectmode=EXTENDED, activestyle='none')
+        self._listbox_operation.bind('<<ListboxSelect>>', self.get_index) #on attache la fontion get_index pour pouvoir supprimer 
         #le boutton effectué l'opération
-        self._buton_effectuer_operation = tk.Button(self._inter_effectuer_operation, text="Effectuer", command=self.get_index)
+        self._buton_effectuer_operation = tk.Button(self._inter_effectuer_operation, text="Effectuer", command=lambda:self._controller.effectuer_operation(self._listbox_des_plaques.curselection(), self._listbox_des_operateurs.curselection()))
         self._le_nombre_N = tk.Label(self._inter_solution, text="154", font=("Courrier", 25), bg = "white", fg = Vue.color_fond)
         self._buton_solution = tk.Button(self._inter_solution, text="Solution", font=("Courrier", 15), bg = "white", fg = Vue.color_fond)
         
@@ -128,7 +133,7 @@ class Vue(tk.Tk):
             
         #les items de la listbox des opérateurs
         for i in range(0,4):
-            self._listbox_des_operateurs.insert(i, "{}".format(Vue.tple_operateur[i]))
+            self._listbox_des_operateurs.insert(i, "{}".format(self._controller.liste_operateur()[i]))
         
         
         self._interface.grid(row=0, column=0)
@@ -145,9 +150,15 @@ class Vue(tk.Tk):
         self._le_nombre_N.pack(padx=10, pady=5, fill= "both")
         self._buton_solution.pack()
         self._label_historique.pack()
+        self._listbox_operation.pack()
     
-    def get_index(self):
-        print("Vous avez selectionner la plaque numéro : {} => 1erOperande".format(int(self._listbox_des_plaques.curselection()[0]+1)))
-        print("Et l'opérateur numéro : {}".format(int(self._listbox_des_operateurs.curselection()[0]+1)))
-        print("Vous avez selectionner la plaque numéro : {} => 2emOperande".format(int(self._listbox_des_plaques.curselection()[1]+1)))
+    
+    def lance_alert(self, msg):
+        #Lance une boites de dialogue info
+        messagebox.showinfo("Information", msg)
         
+    def ajouter_listbox_plaque(self, indice, element):
+        self._listbox_des_plaques.insert(indice, element)
+    
+    def ajouter_listbox_operation(self, indice, element):
+        self._listbox_operation.insert(indice, element)

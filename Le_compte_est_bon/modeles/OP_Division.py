@@ -22,10 +22,12 @@ class OP_Division:
     
     def calcul(self, p1, p2, op):
         if op == 3:
-            if (p1 / p2 != 0 ):
-                return "ERROR! La première plaque doit être divisible par la seconde !"
+            if p1 % p2 == 0:  
+                return p1/p2
+            elif p2 % p1 == 0:
+                return p2/p1
             else:
-                return p1 * p2
+                return -1
         else:
             assert(isinstance(self._suivant, OP_Moins)), "Le suivant est non valide !"
             return self._suivant.calcul(p1,p2, op)

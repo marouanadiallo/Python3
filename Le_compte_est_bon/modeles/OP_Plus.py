@@ -16,6 +16,7 @@ class OP_Plus:
         '''
         Constructor
         '''
+        pass
     
     def calcul(self, p1, p2, op):
         if op == 0:
