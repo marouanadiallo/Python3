@@ -8,6 +8,7 @@ Created on 29 f�vr. 2020
 from Vue import Vue
 from Joueur import Joueur
 from Plaque import Plaques
+from idlelib.editor import index2line
 
 class Controller:
     '''
@@ -49,10 +50,23 @@ class Controller:
                     
     def supprimer_derniere_operation(self):
         #supprime la dernière opération éffectuée
-        op = self._joueur.supprimer_derniere_operation()    
+        op = self._joueur.supprimer_derniere_operation() 
+        self._vue.supprimer_dernier_listbox_operation()
+        self._vue.supprimer_une_plaque(op[4])
+        self._list_tirage.remove(op[4])
+        
+        self._list_tirage.append(op[0])
+        self._vue.ajouter_listbox_plaque(op[0])
+        
+        self._list_tirage.append(op[2])
+        self._vue.ajouter_listbox_plaque(op[2])
+        
+        print(op) 
+        print(self._list_tirage)  
         
     def affiche_historique(self, sauvegarde):
-        self._vue.ajouter_listbox_operation(sauvegarde.index(sauvegarde[len(sauvegarde)-1]), sauvegarde[len(sauvegarde)-1])
+        print(sauvegarde)
+        self._vue.ajouter_listbox_operation(sauvegarde[-1])
     
     def supprime_et_ajoute_des_plaque(self, index1, index2, res):
         print(index1, index2)
@@ -60,11 +74,11 @@ class Controller:
         del self._list_tirage[index1]
         del self._list_tirage[index2-1] 
         
-        self._vue._listbox_des_plaques.delete(index2) #fonction de suppression
-        self._vue._listbox_des_plaques.delete(index1)
+        self._vue.supprimer_item_listbox_plaque(index2) #fonction de suppression
+        self._vue.supprimer_item_listbox_plaque(index1)
         
         self._list_tirage.append(res)
-        self._vue.ajouter_listbox_plaque(self._list_tirage.index(self._list_tirage[len(self._list_tirage)-1]), self._list_tirage[len(self._list_tirage)-1]) 
+        self._vue.ajouter_listbox_plaque(self._list_tirage[-1]) 
         
     def lancer(self):
         self._vue.mainloop() #on lance la fenetre
